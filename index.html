@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Calculadora do Torneiro</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef1f4;color:#17202a;font-family:Arial,sans-serif}
+header{background:#111827;color:#fff;padding:18px 16px 15px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:12px;background:#374151;display:grid;place-items:center;font-size:25px}
+h1{font-size:21px;margin:0}.sub{font-size:12px;opacity:.75;margin-top:3px}
+main{max-width:760px;margin:auto;padding:14px}.tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:9px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap;border:0;background:#fff;padding:11px 13px;border-radius:10px;font-weight:bold;color:#4b5563;box-shadow:0 1px 4px #0001}.tab.active{background:#111827;color:#fff}
+.card{background:#fff;border-radius:15px;padding:16px;margin:10px 0;box-shadow:0 2px 8px #0000000d}
+.hero{background:linear-gradient(135deg,#111827,#374151);color:white;padding:20px;border-radius:17px;margin-bottom:12px}
+.hero h2{margin:0 0 7px;font-size:23px}.hero p{margin:0;opacity:.85;font-size:13px;line-height:1.45}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{padding:15px;border-radius:13px;background:#f5f6f8}.tile b{display:block;font-size:16px;margin-bottom:4px}.tile span{font-size:12px;color:#667085}
+label{display:block;font-weight:bold;font-size:13px;margin-top:10px}input,select{width:100%;padding:12px;margin-top:5px;border:1px solid #d0d5dd;border-radius:9px;font-size:16px;background:white}
+.btn{width:100%;margin-top:13px;padding:13px;border:0;border-radius:10px;background:#111827;color:white;font-weight:bold;font-size:15px}.result{margin-top:13px;padding:14px;border-radius:10px;background:#eef5ff;line-height:1.6}.big{font-size:21px;font-weight:bold}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}th,td{padding:8px 5px;border-bottom:1px solid #e5e7eb;text-align:center}th{background:#f3f4f6}
+.note{font-size:12px;color:#667085;line-height:1.45}.hidden{display:none}.footer{text-align:center;color:#7a8490;font-size:11px;padding:20px 0}
+@media(max-width:430px){.grid{grid-template-columns:1fr 1fr}.card{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">⚙</div><div><h1>Calculadora do Torneiro</h1><div class="sub">Ferramentas práticas para usinagem</div></div></div></header>
+<main>
+<section id="inicio" class="view">
+<div class="hero"><h2>Calculadora do Torneiro</h2><p>Cálculos rápidos para quem trabalha com torno, furação, roscas, chavetas e recartilhamento.</p></div>
+<div class="grid">
+<div class="tile"><b>🔩 Roscas</b><span>Medidas e furo para macho</span></div>
+<div class="tile"><b>📐 Cone</b><span>Ângulo do carro superior</span></div>
+<div class="tile"><b>⚙️ RPM</b><span>Velocidade de corte</span></div>
+<div class="tile"><b>🔵 Furação</b><span>PCD e coordenadas</span></div>
+</div>
+<div class="card"><b>Desenvolvido por Márcio Moreira</b><p class="note">Versão 1.0 • 2026</p></div>
+</section>
+
+<section id="roscas" class="view hidden">
+<div class="card"><h2>🔩 Tabela de Roscas</h2>
+<label>Rosca<select id="rsel"></select></label>
+<button class="btn" id="rbtn">Consultar</button><div id="rout" class="result"></div>
+<p class="note">Furo para macho = referência prática para rosca interna. Confirme a tabela do fabricante do macho, material e grau de engajamento antes da fabricação.</p></div>
+<div class="card"><h3>Rosca selecionada</h3><div id="rtable"></div></div>
+</section>
+
+<section id="cone" class="view hidden"><div class="card"><h2>📐 Ângulo do Cone</h2>
+<label>Diâmetro maior (mm)<input id="D1" type="number" value="13"></label><label>Diâmetro menor (mm)<input id="D2" type="number" value="12"></label><label>Comprimento (mm)<input id="Lc" type="number" value="55"></label>
+<button class="btn" id="cbtn">Calcular</button><div id="cout" class="result"></div></div></section>
+
+<section id="rpm" class="view hidden"><div class="card"><h2>⚙️ RPM</h2>
+<label>Velocidade de corte Vc (m/min)<input id="vc" type="number" value="30"></label><label>Diâmetro (mm)<input id="drpm" type="number" value="50"></label>
+<button class="btn" id="rpmbtn">Calcular</button><div id="rpmout" class="result"></div></div></section>
+
+<section id="pcd" class="view hidden"><div class="card"><h2>🔵 Furação em PCD</h2>
+<label>PCD / diâmetro do círculo (mm)<input id="pcdval" type="number" value="100"></label><label>Número de furos<input id="nh" type="number" value="4"></label><label>Ângulo inicial (°)<input id="ang" type="number" value="0"></label>
+<button class="btn" id="pcdbtn">Calcular</button><div id="pcdout" class="result"></div></div></section>
+
+<section id="chaveta" class="view hidden"><div class="card"><h2>🔑 Chaveta DIN 6885</h2>
+<label>Diâmetro do eixo (mm)<input id="eixo" type="number" value="25"></label><button class="btn" id="chbtn">Consultar</button><div id="chout" class="result"></div></div></section>
+
+<section id="rec" class="view hidden"><div class="card"><h2>⚒️ Recartilha</h2>
+<label>Material<select id="mat"><option>Aço ~600 N/mm²</option><option>Aço ~900 N/mm²</option><option>Aço inoxidável</option><option>Alumínio</option><option>Referência geral</option></select></label>
+<label>Passo da recartilha (mm)<select id="prec"><option value=".3">0,3</option><option value=".6">0,6</option><option value="1">1,0</option><option value="1.2">1,2</option><option value="1.5">1,5</option><option value="1.6">1,6</option><option value="2">2,0</option></select></label>
+<button class="btn" id="recbtn">Consultar</button><div id="recout" class="result"></div></div></section>
+
+<section id="sobre" class="view hidden"><div class="card"><h2>Sobre o aplicativo</h2><p><b>Calculadora do Torneiro</b></p><p>Desenvolvido por <b>Márcio Moreira</b></p><p class="note">Ferramenta desenvolvida para auxiliar profissionais de usinagem e mecânica.</p><p class="note">© 2026 Márcio Moreira — Todos os direitos reservados.</p></div></section>
+
+<div class="tabs">
+<button class="tab active" data-v="inicio">Início</button><button class="tab" data-v="roscas">Roscas</button><button class="tab" data-v="cone">Cone</button><button class="tab" data-v="rpm">RPM</button><button class="tab" data-v="pcd">Furação</button><button class="tab" data-v="chaveta">Chaveta</button><button class="tab" data-v="rec">Recartilha</button><button class="tab" data-v="sobre">Sobre</button>
+</div>
+<div class="footer">Calculadora do Torneiro • Márcio Moreira • v1.0</div>
+</main>
+<script>
+const root=document;
+const threads=[
+["M3 x 0,5",3,.5,2.5],["M4 x 0,7",4,.7,3.3],["M5 x 0,8",5,.8,4.2],["M6 x 1,0",6,1,5],
+["M8 x 1,25",8,1.25,6.8],["M10 x 1,5",10,1.5,8.5],["M12 x 1,75",12,1.75,10.2],["M14 x 2,0",14,2,12],
+["M16 x 2,0",16,2,14],["M18 x 2,5",18,2.5,15.5],["M20 x 2,5",20,2.5,17.5],["M22 x 2,5",22,2.5,19.5],
+["M24 x 3,0",24,3,21],["M27 x 3,0",27,3,24],["M30 x 3,5",30,3.5,26.5],
+["M10 x 1,25 (fina)",10,1.25,8.8],["M12 x 1,5 (fina)",12,1.5,10.5],["M14 x 1,5 (fina)",14,1.5,12.5],
+["M16 x 1,5 (fina)",16,1.5,14.5],["M18 x 1,5 (fina)",18,1.5,16.5],["M20 x 1,5 (fina)",20,1.5,18.5],
+["M22 x 1,5 (fina)",22,1.5,20.5],["M24 x 2,0 (fina)",24,2,22],["M27 x 2,0 (fina)",27,2,25],
+["M30 x 2,0 (fina)",30,2,28]
+];
+threads.forEach((t,i)=>{let o=document.createElement("option");o.value=i;o.textContent=t[0];rsel.appendChild(o)});
+function show(id){document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.v===id));window.scrollTo(0,0)}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>show(b.dataset.v)));
+function thread(){let t=threads[+rsel.value];rout.innerHTML=`Rosca: <b>${t[0]}</b><br>Diâmetro nominal: <b>${t[1].toFixed(2)} mm</b><br>Passo: <b>${t[2].toFixed(2)} mm</b><br>Furo para macho: <span class="big">${t[3].toFixed(2)} mm</span><br>Avanço no torno: <b>${t[2].toFixed(2)} mm/volta</b>`;rtable.innerHTML=`<table><tr><th>Item</th><th>Valor</th></tr><tr><td>Nominal</td><td>${t[1]} mm</td></tr><tr><td>Passo</td><td>${t[2]} mm</td></tr><tr><td>Furo macho</td><td>${t[3]} mm</td></tr><tr><td>Avanço/volta</td><td>${t[2]} mm</td></tr></table>`}
+rbtn.onclick=thread;thread();
+cbtn.onclick=()=>{let a=+D1.value,b=+D2.value,l=+Lc.value;if(l<=0||a<=b){cout.textContent="Informe valores válidos: maior > menor e comprimento > 0.";return}let x=Math.atan((a-b)/(2*l))*180/Math.PI;cout.innerHTML=`Ângulo do carro superior: <span class="big">${x.toFixed(4)}°</span><br>Ângulo incluído: ${(2*x).toFixed(4)}°`};
+rpmbtn.onclick=()=>{let v=+vc.value,d=+drpm.value;if(v<=0||d<=0){rpmout.textContent="Informe valores maiores que zero.";return}rpmout.innerHTML=`Rotação: <span class="big">${(v*1000/(Math.PI*d)).toFixed(0)} rpm</span>`};
+pcdbtn.onclick=()=>{let d=+pcdval.value,n=Math.floor(+nh.value),a0=+ang.value;if(d<=0||n<2){pcdout.textContent="Informe PCD > 0 e pelo menos 2 furos.";return}let ch=d*Math.sin(Math.PI/n),s=`Ângulo entre furos: <b>${(360/n).toFixed(3)}°</b><br>Distância centro a centro: <span class="big">${ch.toFixed(3)} mm</span><br><br>`;for(let i=0;i<n;i++){let a=(a0+i*360/n)*Math.PI/180;s+=`Furo ${i+1}: X ${((d/2)*Math.cos(a)).toFixed(3)} | Y ${((d/2)*Math.sin(a)).toFixed(3)} mm<br>`}pcdout.innerHTML=s};
+const keys=[[6,8,"2×2",1.2,1],[8,10,"3×3",1.8,1.4],[10,12,"4×4",2.5,1.8],[12,17,"5×5",3,2.3],[17,22,"6×6",3.5,2.8],[22,30,"8×7",4,3.3],[30,38,"10×8",5,3.3],[38,44,"12×8",5,3.3],[44,50,"14×9",5.5,3.8],[50,58,"16×10",6,4.3],[58,65,"18×11",7,4.4],[65,75,"20×12",7.5,4.9],[75,85,"22×14",9,5.4],[85,95,"25×14",9,5.4],[95,110,"28×16",10,6.4],[110,130,"32×18",11,7.4]];
+chbtn.onclick=()=>{let d=+eixo.value,k=keys.find(x=>d>=x[0]&&d<=x[1]);chout.innerHTML=k?`Faixa do eixo: ${k[0]}–${k[1]} mm<br>Chaveta: <span class="big">${k[2]} mm</span><br>t1: ${k[3]} mm &nbsp; t2: ${k[4]} mm`:"Diâmetro fora da tabela desta versão."};
+const rec={"Aço ~600 N/mm²":".15","Aço ~900 N/mm²":".10","Aço inoxidável":".12","Alumínio":".14","Referência geral":".12"};
+recbtn.onclick=()=>{let p=+prec.value,v=+rec[mat.value];let scale=p===1?v:Math.max(.05,v*(1/p));recout.innerHTML=`Avanço axial de referência: <span class="big">${scale.toFixed(2)} mm/volta</span><br>Passo: ${p.toFixed(1)} mm<br>Material: ${mat.value}<br><span class="note">Use como ponto de partida e ajuste conforme máquina, ferramenta e material.</span>`};
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(()=>{});
+</script>
+</body></html>
